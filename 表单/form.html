@@ -54,6 +54,16 @@
                        :checked="formData.hobbies.includes('发呆')?'checked':''">
             </div>
         </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">开关</label>
+            <div class="layui-input-block">
+                <input type="checkbox" name="switch" lay-skin="switch"
+                       lay-text="hello|world" lay-filter="switchChange">
+            </div>
+        </div>
+
     </form>
 </div>
 </body>
@@ -80,7 +90,6 @@
         })
 
         form.on("checkbox(selectHobby)", function (obj) {
-            var data = $(obj.elem);
             console.log(obj.elem.dataset.hobby)
             var hobby = obj.elem.dataset.hobby
             var check = obj.elem.checked;
@@ -90,6 +99,15 @@
                 var index = vueInstance.formData.hobbies.indexOf(hobby)
                 vueInstance.formData.hobbies.splice(index, 1)
             }
+        })
+
+        form.on("checkbox(switchChange)", function (obj) {
+            console.log(123)
+            var data = $(obj.elem);
+            console.log(obj.elem.dataset.hobby)
+            // var hobby = obj.elem.dataset.hobby
+            var check = obj.elem.checked;
+            console.log(check)
         })
 
         //vue部分
