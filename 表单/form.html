@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="/demo/layui/css/layui.css">
+    <style>
+        .mainBox {
+            padding: 50px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="mainBox" id="app">
+    <div class="layui-card">
+        <div class="layui-card-header">表单数据</div>
+        <div class="layui-card-body">
+            {{formData}}
+        </div>
+    </div>
+
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择框</label>
+            <div class="layui-input-block">
+                <select name="city" lay-filter="selectCity">
+                    <option value=""></option>
+                    <option value="0">北京</option>
+                    <option value="1">上海</option>
+                    <option value="2">广州</option>
+                    <option value="3">深圳</option>
+                    <option value="4">杭州</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择日期</label>
+            <div class="layui-input-block">
+                <input type="text"
+                       class="layui-input" id="date">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">爱好</label>
+            <div class="layui-input-block">
+                <input type="checkbox" title="写作" data-hobby="写作" lay-filter="selectHobby"
+                       :checked="formData.hobbies.includes('写作')?'checked':''">
+                <input type="checkbox" title="阅读" data-hobby="阅读" lay-filter="selectHobby"
+                       :checked="formData.hobbies.includes('阅读')?'checked':''">
+                <input type="checkbox" title="发呆" data-hobby="发呆" lay-filter="selectHobby"
+                       :checked="formData.hobbies.includes('发呆')?'checked':''">
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+<script src="../layui/layui.js"></script>
+<script>
+
+    var vueInstance   //vue 示例
+
+    layui.config({
+        base: '/demo/extend/modules/' //你存放新模块的目录，注意，不是 layui 的模块目录
+    }).use('vue'); //加载入口
+
+    layui.use(['vue', 'jquery', 'layer', 'form', 'laydate'], function () {
+        var layer = layui.layer
+            , form = layui.form
+            , vue = layui.vue
+            , laydate = layui.laydate
+            , $ = layui.jquery
+
+
+        form.on("select(selectCity)", function (obj) {
+            console.log(obj.value);
+            vueInstance.formData.city = obj.value
+        })
+
+        form.on("checkbox(selectHobby)", function (obj) {
+            var data = $(obj.elem);
+            console.log(obj.elem.dataset.hobby)
+            var hobby = obj.elem.dataset.hobby
+            var check = obj.elem.checked;
+            if (check) {
+                vueInstance.formData.hobbies.push(hobby)
+            } else {
+                var index = vueInstance.formData.hobbies.indexOf(hobby)
+                vueInstance.formData.hobbies.splice(index, 1)
+            }
+        })
+
+        //vue部分
+        vueInstance = new vue({
+            el: "#app",
+            data: {
+                formData: {
+                    city: "",
+                    date: "",
+                    hobbies: [
+                        "写作", "阅读"
+                    ]
+                }
+            },
+            methods: {
+                selectHobby(hobby) {
+                    console.log(hobby)
+                    if ((index = this.formData.hobbies.indexOf(hobby)) > -1) {
+                        this.formData.hobbies.splice(index, 1)
+                    } else {
+                        this.formData.hobbies.push(hobby)
+                    }
+                }
+            }
+        })
+        laydate.render({
+            elem: '#date',
+            done: function (value, date, endDate) {
+                console.log(value); //得到日期生成的值，如：2017-08-18
+                vueInstance.formData.date = value
+            }//指定元素
+        })
+
+        //重新渲染下
+        form.render()
+
+    });
+</script>
+</html>
