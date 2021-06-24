@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="app" v-cloak>
+    {{msg}}
+</div>
+
+</body>
+<script src="./layui/layui.js"></script>
+<script>
+    layui.config({
+        base: '/demo/extend/modules/' //你存放新模块的目录，注意，不是 layui 的模块目录
+    }).use('vue'); //加载入口
+
+
+    layui.use(['layer',  'vue'], function () {
+        var layer = layui.layer
+            , vue = layui.vue
+        //vue部分
+        var vueInstance = new vue({
+            el: "#app",
+            data: {
+                "msg": "hello world"
+            },
+        })
+        //layer部分
+        layer.msg('Hello World');
+    });
+</script>
+</html>

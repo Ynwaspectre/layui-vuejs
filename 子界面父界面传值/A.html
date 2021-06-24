@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="/demo/layui/css/layui.css">
+    <style>
+        .mainBox {
+            padding: 50px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="mainBox" id="app">
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">param1</label>
+            <div class="layui-input-block">
+                <input type="text"  placeholder="参数1" autocomplete="off"
+                       class="layui-input" v-model="param1">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">param2</label>
+            <div class="layui-input-block">
+                <input type="text"  placeholder="参数2" autocomplete="off"
+                       class="layui-input" v-model="param2">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-warm" lay-submit lay-filter="setValueToChild">向子界面传值</button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+<script src="../layui/layui.js"></script>
+<script>
+
+    var vueInstance   //vue 示例
+
+    /**
+     * 获取子页面传过来的值
+     * @param jsonData
+     */
+    function getChildParams(jsonData) {
+        vueInstance.param1 = jsonData.param1
+        vueInstance.param2 = jsonData.param2
+    }
+
+    layui.config({
+        base: '/demo/extend/modules/' //你存放新模块的目录，注意，不是 layui 的模块目录
+    }).use('vue'); //加载入口
+
+
+    layui.use(['layer', 'form', 'vue'], function () {
+        var layer = layui.layer
+            , form = layui.form
+            , vue = layui.vue
+        form.on("submit(setValueToChild)", function (obj) {
+            layer.open({
+                type: 2,
+                maxmin: true,
+                title: "B界面",
+                shade: 0.1,
+                area: ["800px", "600px"],
+                content: "B.html",
+                success: function (layero, index) {
+                    var iframe = window['layui-layer-iframe' + index];
+                    iframe.getParentParams(
+                        {
+                            "param1": vueInstance.param1,
+                            "param2": vueInstance.param2
+                        }
+                    )//getParentParams 定义在子界面B中
+                }
+            });
+            return false
+        })
+        //vue部分
+        vueInstance = new vue({
+            el: "#app",
+            data: {
+                "param1": "我是猪",
+                "param2": "我是小笨猪"
+            },
+        })
+    });
+</script>
+</html>

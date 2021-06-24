@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="/demo/layui/css/layui.css">
+    <style>
+        .mainBox {
+            padding: 50px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="mainBox" id="app">
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">param1</label>
+            <div class="layui-input-block">
+                <input type="text" name="title" placeholder="参数1" autocomplete="off"
+                       class="layui-input" v-model="param1">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">param2</label>
+            <div class="layui-input-block">
+                <input type="text" name="title" placeholder="参数2" autocomplete="off"
+                       class="layui-input" v-model="param2">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-warm" lay-submit lay-filter="setValueToParent">向父界面传值</button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+<script src="../layui/layui.js"></script>
+<script>
+
+    var vueInstance   //vue 示例
+
+    /**
+     * 获取子页面的值
+     * @param jsonData
+     */
+    function getParentParams(jsonData) {
+        setTimeout(function () {
+            console.log("执行getParentParams")
+            vueInstance.param1 = jsonData.param1
+            vueInstance.param2 = jsonData.param2
+        }, 100)
+    }
+
+    layui.config({
+        base: '/demo/extend/modules/' //你存放新模块的目录，注意，不是 layui 的模块目录
+    }).use('vue'); //加载入口
+    layui.use(['layer', 'form', 'vue'], function () {
+        var layer = layui.layer
+            , form = layui.form
+            , vue = layui.vue
+
+        form.on("submit(setValueToParent)", function (obj) {
+            parent.getChildParams({
+                "param1": vueInstance.param1,
+                "param2": vueInstance.param2
+            });
+            var index = parent.layer.getFrameIndex(window.name); //获取当前窗口的name
+            parent.layer.close(index);
+        })
+
+        //vue部分
+        vueInstance = new vue({
+            el: "#app",
+            data: {
+                "param1": "",
+                "param2": ""
+            },
+        })
+    });
+</script>
+</html>
