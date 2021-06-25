@@ -57,13 +57,23 @@
 
 
         <div class="layui-form-item">
-            <label class="layui-form-label">开关</label>
+            <label class="layui-form-label">性别</label>
             <div class="layui-input-block">
-                <input type="checkbox" name="switch" lay-skin="switch"
-                       lay-text="hello|world" lay-filter="switchChange">
+                <input type="checkbox" name="switch" lay-skin="switch" value="1"
+                       lay-text="男|女" lay-filter="switchChange" :checked="formData.gender==1?'checked':''">
             </div>
         </div>
 
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">类别</label>
+            <div class="layui-input-block">
+                <input type="radio" name="sex" value="1" data-cate="1" title="猪" lay-filter="selectCate"
+                       :checked="formData.cate==1?'checked':''">
+                <input type="radio" name="sex" value="2" data-cate="2" title="狗" lay-filter="selectCate"
+                       :checked="formData.cate==2?'checked':''">
+            </div>
+        </div>
     </form>
 </div>
 </body>
@@ -101,13 +111,17 @@
             }
         })
 
-        form.on("checkbox(switchChange)", function (obj) {
-            console.log(123)
+        form.on("switch(switchChange)", function (obj) {
             var data = $(obj.elem);
-            console.log(obj.elem.dataset.hobby)
-            // var hobby = obj.elem.dataset.hobby
             var check = obj.elem.checked;
-            console.log(check)
+            vueInstance.formData.gender = check ? 1 : 2;
+        })
+
+        form.on("radio(selectCate)", function (obj) {
+            var data = $(obj.elem);
+            var cate = obj.elem.dataset.cate
+            console.log(cate)
+            vueInstance.formData.cate =cate
         })
 
         //vue部分
@@ -119,7 +133,9 @@
                     date: "",
                     hobbies: [
                         "写作", "阅读"
-                    ]
+                    ],
+                    gender: 1,
+                    cate: 1
                 }
             },
             methods: {
